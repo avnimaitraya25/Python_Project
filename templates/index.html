@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Risk-Based Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='custom.css') }}">
+</head>
+<body class="bg-pattern">
+  <div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card shadow-lg p-4 animated-card">
+      <h2 class="text-center mb-4">Risk-Based Authentication</h2>
+
+      <form id="riskForm">
+        <!-- Webcam Capture -->
+        <div class="mb-3 text-center">
+          <video id="video" width="320" height="240" autoplay class="rounded shadow-sm"></video>
+          <br>
+          <button type="button" class="btn btn-outline-primary mt-2 glow-btn" onclick="takeSnapshot()">📸 Capture Face</button>
+          <canvas id="canvas" width="320" height="240" style="display: none;"></canvas>
+        </div>
+
+        <!-- Input Fields -->
+        <div class="mb-3">
+          <label>User ID:</label>
+          <input type="text" name="userId" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Round-Trip Time [ms]:</label>
+          <input type="number" name="rtt" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Country:</label>
+          <input type="text" name="country" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Region:</label>
+          <input type="text" name="region" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label>City:</label>
+          <input type="text" name="city" class="form-control">
+        </div>
+        <div class="mb-3">
+          <label>ASN:</label>
+          <input type="text" name="asn" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Browser Name and Version:</label>
+          <input type="text" name="browser" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>OS Name and Version:</label>
+          <input type="text" name="os" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label>Device Type:</label>
+          <input type="text" name="deviceType" class="form-control" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary w-100 glow-btn">Check Risk</button>
+      </form>
+
+      <!-- Spinner -->
+      <div id="spinner" class="text-center mt-3" style="display: none;">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-2">Evaluating risk...</p>
+      </div>
+
+      <!-- Result Display -->
+      <div id="result" class="text-center mt-3">
+        <p>Risk Level: <span id="risk-level" class="fw-bold text-secondary">Not Checked</span></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const video = document.getElementById('video');
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        video.srcObject = stream;
+      })
+      .catch(err => {
+        console.error("Camera access error:", err);
+      });
+
+    let capturedImage = '';
+    function takeSnapshot() {
+      const canvas = document.getElementById('canvas');
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      capturedImage = canvas.toDataURL('image/png');
+    }
+
+    $('#riskForm').on('submit', function (e) {
+      e.preventDefault();
+
+      $('#result').hide();
+      $('#spinner').show();
+
+      let formData = {};
+      $(this).serializeArray().forEach(field => {
+        formData[field.name] = field.value;
+      });
+      formData['snapshot'] = capturedImage;
+
+      $.ajax({
+        type: 'POST',
+        url: '/predict',
+        contentType: 'application/json',
+        data: JSON.stringify(formData),
+        success: function (response) {
+          $('#spinner').hide();
+          $('#result').show();
+
+          if (response.risk) {
+            $('#risk-level').text(response.risk);
+            $('#risk-level').removeClass('text-secondary text-danger text-success');
+            $('#risk-level').addClass(response.risk === 'High Risk' ? 'text-danger' : 'text-success');
+          } else {
+            $('#risk-level').text('Error');
+            $('#risk-level').addClass('text-warning');
+          }
+        },
+        error: function () {
+          $('#spinner').hide();
+          $('#result').show();
+          $('#risk-level').text('Error occurred');
+          $('#risk-level').addClass('text-danger');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

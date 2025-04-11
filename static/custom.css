@@ -1,0 +1,117 @@
+/* Updated Techy Custom CSS with Fullscreen Trend Section */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('../static/images/tech-bg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 900px;
+  margin: 50px auto;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 15px;
+  padding: 40px;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.2);
+  flex: 1;
+}
+
+.card {
+  background: transparent;
+  border: none;
+}
+
+h2, h4 {
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  color: #00ffff;
+  text-shadow: 0 0 8px #00ffff;
+  text-align: center;
+}
+
+label {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+input.form-control {
+  background-color: #121212;
+  color: #ffffff;
+  border: 1px solid #00ffff;
+  border-radius: 8px;
+}
+
+.btn-primary {
+  background-color: #00ffff;
+  border: none;
+  font-weight: bold;
+  color: #000;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #00cccc;
+  transform: scale(1.05);
+}
+
+.btn-outline-primary {
+  border-color: #00ffff;
+  color: #00ffff;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+  background-color: #00ffff;
+  color: #000;
+}
+
+#video, #canvas {
+  border: 2px solid #00ffff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
+}
+
+#result {
+  font-size: 1.4rem;
+  margin-top: 20px;
+  color: #00ff00;
+  text-shadow: 0 0 6px #00ff00;
+  text-align: center;
+}
+
+#spinner p {
+  color: #ffffff;
+  text-align: center;
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  color: #00ffff;
+  margin: 0 auto;
+}
+
+canvas {
+  width: 100% !important;
+  max-width: 100%;
+  height: auto !important;
+  margin-top: 30px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .container {
+      padding: 20px;
+  }
+  h2 {
+      font-size: 1.8rem;
+  }
+}
